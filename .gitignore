@@ -4,3 +4,8 @@
 *.tfstate.backup
 *.tfvars
 *.tfplan
+
+# Node / Docker / general
+node_modules/
+*.log
+.DS_Store
