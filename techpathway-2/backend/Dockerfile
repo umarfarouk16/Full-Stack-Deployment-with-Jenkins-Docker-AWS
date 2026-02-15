@@ -1,7 +1,20 @@
-FROM node:16-alpine AS build
+# Use official Node.js LTS image
+FROM node:18-alpine
+
+# Set working directory
 WORKDIR /app
+
+# Copy package files
 COPY package*.json ./
-RUN npm ci
+
+# Install dependencies
+RUN npm ci --only=production
+
+# Copy application code
 COPY . .
+
+# Expose port
 EXPOSE 8080
-CMD ["npm", "start"]
+
+# Start the application
+CMD ["node", "index.js"]
