@@ -131,7 +131,7 @@ resource "aws_ecs_service" "backend" {
   name            = "${var.project_name}-backend-service"
   cluster         = aws_ecs_cluster.main.id
   task_definition = aws_ecs_task_definition.backend.arn
-  desired_count   = 0 # Number of tasks to run
+  desired_count   = 1 # Number of tasks to run
   launch_type     = "FARGATE"
 
   network_configuration {
@@ -154,7 +154,7 @@ resource "aws_ecs_service" "frontend" {
   name            = "${var.project_name}-frontend-service"
   cluster         = aws_ecs_cluster.main.id
   task_definition = aws_ecs_task_definition.frontend.arn
-  desired_count   = 0 # Number of tasks to run
+  desired_count   = 1 # Number of tasks to run
   launch_type     = "FARGATE"
 
   network_configuration {
