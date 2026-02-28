@@ -23,3 +23,15 @@ variable "availability_zones" {
 }
 
 # Why multiple AZs? ECS requires at least 2 for load balancing
+
+variable "jenkins_key_pair_name" {
+  description = "Name of your existing EC2 key pair for SSH access to Jenkins"
+  type        = string
+  default     = "cyberkey"
+}
+
+variable "jenkins_allowed_cidr" {
+  description = "CIDR allowed to access Jenkins UI (port 8080) and SSH (port 22)"
+  type        = string
+  default     = "0.0.0.0/0" # Restrict to your IP for better security: "x.x.x.x/32"
+}

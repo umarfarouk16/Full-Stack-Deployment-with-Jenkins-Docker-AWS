@@ -33,3 +33,13 @@ output "frontend_service_name" {
   value       = aws_ecs_service.frontend.name
 }
 
+output "jenkins_public_ip" {
+  description = "Jenkins EC2 public IP address"
+  value       = aws_instance.jenkins.public_ip
+}
+
+output "jenkins_url" {
+  description = "Jenkins Web UI URL"
+  value       = "http://${aws_instance.jenkins.public_ip}:8080"
+}
+
