@@ -20,12 +20,15 @@ pipeline {
             steps {
                 script {
                     sh '''
-                        # Ensure AWS CLI is available in PATH
+                        # Add AWS CLI to PATH for Jenkins
+                        export PATH=$PATH:/usr/bin
+
+                        # Ensure AWS CLI is available
                         if ! command -v aws &> /dev/null; then
                             echo "❌ AWS CLI not found in PATH"
                             exit 1
                         fi
-                        echo "✅ AWS CLI found"
+                        echo "✅ AWS CLI found in PATH"
 
                         # Deploy backend service
                         aws ecs update-service \
