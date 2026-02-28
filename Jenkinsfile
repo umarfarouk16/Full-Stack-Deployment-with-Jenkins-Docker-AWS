@@ -11,7 +11,6 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                echo '📦 Checking out code from GitHub...'
                 checkout scm
             }
         }
@@ -20,15 +19,13 @@ pipeline {
             steps {
                 script {
                     sh '''
-                        # Add AWS CLI to PATH for Jenkins
-                        export PATH=$PATH:/usr/bin
-
                         # Ensure AWS CLI is available
+                        export PATH=$PATH:/usr/bin
                         if ! command -v aws &> /dev/null; then
                             echo "❌ AWS CLI not found in PATH"
                             exit 1
                         fi
-                        echo "✅ AWS CLI found in PATH"
+                        echo "✅ AWS CLI found"
 
                         # Deploy backend service
                         aws ecs update-service \
