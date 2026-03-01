@@ -15,23 +15,20 @@ pipeline {
             }
         }
 
-        stage('Setup AWS CLI') {
-            steps {
-                sh '''
-                    if ! command -v aws >/dev/null 2>&1; then
-                        echo "AWS CLI not found, installing v2..."
-                        curl -fsSL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "/tmp/awscliv2.zip"
-                        unzip -q /tmp/awscliv2.zip -d /tmp/
-                        /tmp/aws/install
-                    fi
-                    aws --version
-                '''
-            }
-        }
-
         stage('Deploy to ECS') {
             steps {
                 sh '''
+                    # Install AWS CLI v2 to /tmp if not already available
+                    if ! command -v aws >/dev/null 2>&1 && [ ! -f /tmp/aws-bin/aws ]; then
+                        echo "Installing AWS CLI v2..."
+                        curl -fsSL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "/tmp/awscliv2.zip"
+                        unzip -q /tmp/awscliv2.zip -d /tmp/
+                        /tmp/aws/install --install-dir /tmp/aws-cli --bin-dir /tmp/aws-bin
+                    fi
+
+                    export PATH=$PATH:/tmp/aws-bin
+                    aws --version
+
                     # Deploy backend service
                     aws ecs update-service \
                         --cluster ${ECS_CLUSTER} \
@@ -55,7 +52,7 @@ pipeline {
     post {
         success {
             echo 'Pipeline completed successfully!'
-            echo 'Frontend URL: http://techpathway-frontend-alb-1807582629.us-east-1.elb.amazonaws.com'
+            echo 'Frontend URL: http://techpathway-frontend-alb-149258769.us-east-1.elb.amazonaws.com'
         }
         failure {
             echo 'Pipeline failed. Check logs above.'
