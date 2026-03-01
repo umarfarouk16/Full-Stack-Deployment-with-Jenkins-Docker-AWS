@@ -12,8 +12,8 @@ RUN npm install --loglevel error
 # Copy source
 COPY . .
 
-# Build
-RUN npm run build
+# Build (limit Node memory to avoid OOM on small instances)
+RUN NODE_OPTIONS=--max-old-space-size=512 npm run build
 
 # Production stage
 FROM nginx:alpine
