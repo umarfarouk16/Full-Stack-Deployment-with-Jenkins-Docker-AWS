@@ -1,11 +1,11 @@
-# Latest Amazon Linux 2023 AMI (auto-fetched, no hardcoding)
-data "aws_ami" "amazon_linux_2023" {
+# Latest Ubuntu 22.04 LTS AMI (auto-fetched, no hardcoding)
+data "aws_ami" "ubuntu" {
   most_recent = true
-  owners      = ["amazon"]
+  owners      = ["099720109477"] # Canonical
 
   filter {
     name   = "name"
-    values = ["al2023-ami-*-x86_64"]
+    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
   }
 
   filter {
@@ -89,8 +89,8 @@ resource "aws_iam_instance_profile" "jenkins" {
 
 # Jenkins EC2 Instance
 resource "aws_instance" "jenkins" {
-  ami                         = data.aws_ami.amazon_linux_2023.id
-  instance_type               = "t3.micro"
+  ami                         = data.aws_ami.ubuntu.id
+  instance_type               = "t3.medium"
   key_name                    = var.jenkins_key_pair_name
   subnet_id                   = aws_subnet.public[0].id
   vpc_security_group_ids      = [aws_security_group.jenkins.id]

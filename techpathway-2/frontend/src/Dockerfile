@@ -1,5 +1,5 @@
-# Build stage - Use full Node image
-FROM node:18 AS build
+# Build stage
+FROM node:18-alpine AS build
 
 WORKDIR /app
 
