@@ -39,7 +39,7 @@ pipeline {
                     docker push ${ECR_BACKEND}:latest
 
                     # Build and push frontend
-                    docker build -t ${ECR_FRONTEND}:latest ./techpathway-2/frontend/src
+                    docker build -f ./techpathway-2/frontend/src/Dockerfile -t ${ECR_FRONTEND}:latest ./techpathway-2/frontend
                     docker push ${ECR_FRONTEND}:latest
                 '''
             }
