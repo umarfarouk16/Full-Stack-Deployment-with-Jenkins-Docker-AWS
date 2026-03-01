@@ -19,13 +19,14 @@ pipeline {
             steps {
                 script {
                     sh '''
-                        # Ensure AWS CLI is available
-                        export PATH=$PATH:/usr/bin
-                        if ! command -v aws &> /dev/null; then
-                            echo "❌ AWS CLI not found in PATH"
+                        # Ensure AWS CLI is available in PATH
+                        export PATH=$PATH:/usr/bin:/usr/local/bin:/snap/bin:/opt/homebrew/bin
+                        if ! command -v aws >/dev/null 2>&1; then
+                            echo "AWS CLI not found in PATH: $PATH"
                             exit 1
                         fi
-                        echo "✅ AWS CLI found"
+                        echo "AWS CLI found: $(command -v aws)"
+                        aws --version
 
                         # Deploy backend service
                         aws ecs update-service \
