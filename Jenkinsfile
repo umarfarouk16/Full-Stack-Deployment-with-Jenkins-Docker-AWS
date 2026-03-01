@@ -19,6 +19,9 @@ pipeline {
         }
 
         stage('Build & Push to ECR') {
+            options {
+                timeout(time: 20, unit: 'MINUTES')
+            }
             steps {
                 sh '''
                     # Install AWS CLI v2 to /tmp if not already present

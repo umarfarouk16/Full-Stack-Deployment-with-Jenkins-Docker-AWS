@@ -6,11 +6,8 @@ WORKDIR /app
 # Copy package files
 COPY package.json ./
 
-# Install dependencies with verbose logging
-RUN npm install --loglevel verbose
-
-# Verify react-scripts exists
-RUN ls -la node_modules/.bin/
+# Install dependencies
+RUN npm install --loglevel error
 
 # Copy source
 COPY . .
