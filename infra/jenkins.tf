@@ -90,7 +90,7 @@ resource "aws_iam_instance_profile" "jenkins" {
 # Jenkins EC2 Instance
 resource "aws_instance" "jenkins" {
   ami                         = data.aws_ami.ubuntu.id
-  instance_type               = "t3.medium"
+  instance_type               = "t3.micro"
   key_name                    = var.jenkins_key_pair_name
   subnet_id                   = aws_subnet.public[0].id
   vpc_security_group_ids      = [aws_security_group.jenkins.id]
