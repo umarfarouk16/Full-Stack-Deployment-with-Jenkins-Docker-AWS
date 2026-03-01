@@ -2,10 +2,13 @@ pipeline {
     agent any
 
     environment {
-        AWS_REGION = 'us-east-1'
-        ECS_CLUSTER = 'techpathway-cluster'
+        AWS_REGION      = 'us-east-1'
+        AWS_ACCOUNT_ID  = '003021232742'
+        ECR_BACKEND     = "003021232742.dkr.ecr.us-east-1.amazonaws.com/techpathway-backend"
+        ECR_FRONTEND    = "003021232742.dkr.ecr.us-east-1.amazonaws.com/techpathway-frontend"
+        ECS_CLUSTER     = 'techpathway-cluster'
         BACKEND_SERVICE = 'techpathway-backend-service'
-        FRONTEND_SERVICE = 'techpathway-frontend-service'
+        FRONTEND_SERVICE= 'techpathway-frontend-service'
     }
 
     stages {
@@ -15,19 +18,37 @@ pipeline {
             }
         }
 
-        stage('Deploy to ECS') {
+        stage('Build & Push to ECR') {
             steps {
                 sh '''
-                    # Install AWS CLI v2 to /tmp if not already available
+                    # Install AWS CLI v2 to /tmp if not already present
                     if ! command -v aws >/dev/null 2>&1 && [ ! -f /tmp/aws-bin/aws ]; then
                         echo "Installing AWS CLI v2..."
                         curl -fsSL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "/tmp/awscliv2.zip"
                         unzip -q /tmp/awscliv2.zip -d /tmp/
                         /tmp/aws/install --install-dir /tmp/aws-cli --bin-dir /tmp/aws-bin
                     fi
-
                     export PATH=$PATH:/tmp/aws-bin
-                    aws --version
+
+                    # Log in to ECR
+                    aws ecr get-login-password --region ${AWS_REGION} | \
+                        docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
+
+                    # Build and push backend
+                    docker build -t ${ECR_BACKEND}:latest ./techpathway-2/backend
+                    docker push ${ECR_BACKEND}:latest
+
+                    # Build and push frontend
+                    docker build -t ${ECR_FRONTEND}:latest ./techpathway-2/frontend/src
+                    docker push ${ECR_FRONTEND}:latest
+                '''
+            }
+        }
+
+        stage('Deploy to ECS') {
+            steps {
+                sh '''
+                    export PATH=$PATH:/tmp/aws-bin
 
                     # Deploy backend service
                     aws ecs update-service \
@@ -43,7 +64,7 @@ pipeline {
                         --force-new-deployment \
                         --region ${AWS_REGION}
 
-                    echo "Deployment commands executed successfully."
+                    echo "Deployment triggered successfully."
                 '''
             }
         }
